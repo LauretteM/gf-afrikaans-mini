@@ -6,13 +6,16 @@ abstract MiniCat = {
   --   IAdv ;    -- interrogative adverb             e.g. "why"
 
     S ;     -- sentence
+    RS ;    -- relative sentence
     Imp ; 
     QS ;    -- question (fixed tense)           e.g. "who doesn't walk"
     QCl ;   -- question clause (variable tense) e.g. "who walks"
     Cl ;    -- clause
+    RCl ;   -- relative clause
     VP ;    -- verb phrase
     NP ;    -- noun phrase
     AP ;    -- adjectival phrase
+    RP ;    -- relative pronoun
 
     PN ;    -- proper name                      e.g. "John"
     CN ;    -- common noun

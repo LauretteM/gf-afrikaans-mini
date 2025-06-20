@@ -26,9 +26,14 @@ oper
     mkV : (wees,is1,is2,was,gewees,part : Str) -> V = \wees,is1,is2,was,gewees,part -> lin V (mkVerbPart wees is1 is2 was gewees part)  -- worst-case verb
   } ;
 
+  preV = overload {
+    preV : (bereken : Str) -> V = \bereken -> lin V (mkVerb bereken bereken bereken bereken bereken) ;
+  } ;
+
   mkV2 = overload {
     mkV2 : (sien : Str) -> V2  = \sien -> lin V2 { v = (regVerb sien) ; c = [] ; hasC = False } ;
     mkV2 : (gluur,aan : Str) -> V2 = \gluur,aan -> lin V2 { v = (regVerbPart gluur aan) ; c = [] ; hasC = False }  ;
+    mkV2 : V -> V2 = \v -> lin V2 { v = v ; c = "" ; hasC = False } ;
     mkV2 : V -> Str -> V2 = \kyk,na -> lin V2 { v = kyk ; c = na ; hasC = True } ;
   } ;
 

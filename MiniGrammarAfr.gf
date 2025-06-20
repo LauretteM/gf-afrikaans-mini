@@ -12,6 +12,10 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
       s = \\o => t.s ++ p.s ++ cl.s!t.t!p.p!o ;
     } ;
 
+    UseRCl t p rcl = {
+      s = t.s ++ p.s ++ rcl.s!t.t!p.p
+    } ;
+
     UseQCl t p cl = {
       s = \\o => t.s ++ p.s ++ cl.s!t.t!p.p!o ;
       o = cl.o ;
@@ -91,6 +95,119 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
           SOV => subj ++ obja ++ neg1!p ++ adv ++ objb ++ verba ++ verbb ++ verbhet ++ verbc ++ subcl ++ neg2!p ;
           VSO => verba ++ verbhet ++ subj ++ obja ++ neg1!p ++ adv ++ objb ++ subcl ++ verbb ++ verbc ++ neg2!p
         } ;
+    } ;
+
+    ExistCl np = {
+      s = \\t,p,f =>
+        let
+          v = {
+            s = table {
+              VInfa => "wees" ;
+              VInfb => "is" ;
+              VPres => "is" ;
+              VPast => "was" ;
+              VPerf => "gewees"
+            } ;
+            hasPart = False ;
+            p = [] ;
+            vtype = VBe
+          } ;
+          subj = "daar" ;
+          verba = case t of {
+            TPast => v.s!VPast ;
+            TPerf => v.s!VPres ;
+            TFut => "sal" ;
+            TPres => v.s!VPres
+          } ;
+          verbhet = [] ;
+          verbb =  [] ;
+          verbc = case t of {
+            TPast => "gewees" ; -- (was) gewees
+            TFut => "wees" ; -- (sal) wees
+            _ => [] 
+          } ;
+          obja = [] ;
+          objb = np.s!Acc ;
+          subcl = [] ;
+          adv = [] ;
+          neg1 : TPol => Str = table {
+            TPos => [] ;
+            TNeg => putNie (fillNeg1 t True)
+          } ;
+          neg2 : TPol => Str = table {
+            TPos => putNie (fillNeg2Pos np.p False) ;
+            TNeg => pre { "nie" => [] ; _ => "nie" }
+          } ;
+        in case f of {
+          SVO => subj ++ verba ++ verbhet ++ obja ++ neg1!p ++ adv ++ objb ++ verbb ++ verbc ++ subcl ++ neg2!p ;
+          SOV => subj ++ obja ++ neg1!p ++ adv ++ objb ++ verba ++ verbb ++ verbhet ++ verbc ++ subcl ++ neg2!p ;
+          VSO => verba ++ verbhet ++ subj ++ obja ++ neg1!p ++ adv ++ objb ++ subcl ++ verbb ++ verbc ++ neg2!p
+        } ;
+    } ;
+
+    RelVP rp vp = {
+      s = \\t,p =>
+        let
+          verba = case <(vp.v).vtype,t> of {
+            <VAux,TPres> => (vp.v).s!VPres ; -- kan
+            <VAux,TPast> => (vp.v).s!VPast ; -- kon
+            <VAux,TPerf> => (vp.v).s!VPast ; -- kon
+            <_,TPres> => (vp.v).s!VPres ; -- sien
+            <VBe,TPast> => (vp.v).s!VPast ;
+            <VBe,TPerf> => (vp.v).s!VPres ;
+            <VReg,TPast> => [] ;
+            <VReg,TPerf> => [] ;
+            <_,TFut> => "sal" ;
+            <_,_> => []
+          } ;
+          verbhet = case <(vp.v).vtype,t> of {
+            <VReg,TPast> => "het" ;
+            <VReg,TPerf> => "het" ;
+            <_,_> => []
+          } ;
+          verbb = case <(vp.v).vtype,t,vp.vIsBe> of {
+            <VAux,TPres,_> => vp.compV!VInfa ; -- (kan) sien
+            <VAux,TPast,True> => [] ; -- () gewees het
+            <VAux,TPast,False> => vp.compV!VPast ; -- (kon) sien
+            <VAux,TPerf,_> => vp.compV!VInfa ; -- (kon) gesien
+            <VAux,TFut> => (vp.v).s!VInfa ; -- (sal) kan
+
+            <VReg,TPres,_> => (vp.v).p ; -- (kyk) op
+            <VReg,TPast,_> => (vp.v).s!VPast ; -- (het) gesien
+            <VReg,TPerf,_> => (vp.v).s!VPerf ; -- (het) gesien
+            <VReg,TFut,_> => (vp.v).s!VInfa ;-- (sal) sien
+
+            <_,_,_> => []
+          } ;
+          verbc = case <(vp.v).vtype,t,vp.vIsBe> of {
+            <VBe,TPast,_> => "gewees" ; -- (was) gewees
+            <VBe,TFut,_> => "wees" ; -- (sal) wees
+            <VAux,TPast,True> => "gewees het" ; -- (kon gesien) het
+            <VAux,TPast,False> => "het" ; -- (kon gesien) het
+            <VAux,TFut,_> => vp.compV!VInfa ; -- (sal kan) sien
+
+            <VComp,_,_> => "om" ++ "te" ++ vp.compV!VInfa ;
+            <_,_,_> => []
+          } ;
+          obja = case vp.v.vtype of {
+            VBe => [] ;
+            _ => vp.n2a
+          } ;
+          objb = case vp.v.vtype of {
+            VBe => vp.n2a ;
+            _ => vp.n2b
+          } ;
+          subcl = vp.subCl ;
+          adv = vp.adv ;
+          neg1 : TPol => Str = table {
+            TPos => [] ;
+            TNeg => putNie (fillNeg1 t vp.filled)
+          } ;
+          neg2 : TPol => Str = table {
+            TPos => putNie (fillNeg2Pos TPos vp.nword) ;
+            TNeg => pre { "nie" => [] ; _ => "nie" }
+          } ;
+        in rp.s ++ obja ++ neg1!p ++ adv ++ objb ++ verba ++ verbb ++ verbhet ++ verbc ++ subcl ++ neg2!p ;
     } ;
 
     QuestCl cl = cl ** { o = VSO ; qw = [] ; hasQw = False } ;
@@ -183,6 +300,8 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
       }
     } ; 
 
+    IdRP = { s = "wat" } ;
+
     ComplV2 v2 np = {
       v = v2.v ;
       inf = <[],[]> ;
@@ -213,6 +332,19 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
       inf = <[],[]> ;
       vIsBe = True ;
       n2a = ap.s!APredic ;
+      n2b = [] ;
+      subCl = [] ; -- dat <S>
+      adv = [] ;
+      filled = True ;
+      nword = False ;
+      compV = \\_ => []
+    } ;
+
+    CompNP np = {
+      v = be_V ; -- weet
+      inf = <[],[]> ;
+      vIsBe = True ;
+      n2a = np.s!Nom ;
       n2b = [] ;
       subCl = [] ; -- dat <S>
       adv = [] ;
@@ -354,6 +486,13 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
       p = TPos
     } ;
 
+    RelNP np rs = {
+      s = \\c => np.s!c ++ rs.s ++ SOFT_BIND ++ "," ;
+      a = np.a ;
+      isPron = np.isPron ;
+      p = np.p
+    } ;
+
     PronDet pron = let 
       num = case pron.a of {
         Ag n p g => n
@@ -422,7 +561,7 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
 
     UseA adj = adj ;
 
-    a_Det = { s = "'n" ; n = Sg ; p = TPos } ;
+    aSg_Det = { s = "'n" ; n = Sg ; p = TPos } ;
     aPl_Det = { s = "" ; n = Pl ; p = TPos } ;
     theSg_Det = { s = "die" ; n = Sg ; p = TPos } ;
     thePl_Det = { s = "die" ; n = Pl ; p = TPos } ;
@@ -458,11 +597,14 @@ concrete MiniGrammarAfr of MiniGrammar = MiniCatAfr ** open Prelude, MiniResAfr 
     who_IP = { s = "wie" } ;
     here_Adv = { s = "hier" ; p = TPos } ;
 
-    by_Prep = {s = "deur"}  ;
+    at_Prep = {s = "by"}  ;
     in_Prep = {s = "in"}  ;
     of_Prep = {s = "van"}  ;
     with_Prep = {s = "met"}  ;
     to_Prep = {s = "na"} ;
+    on_Prep = {s = "op"} ;
+    from_Prep = {s = "van"} ;
+    by_Prep = {s = "deur"}  ;
 
     can_VV = mkAux "kan" "kon" ;
     must_VV = mkAux "moet" "moes" ;

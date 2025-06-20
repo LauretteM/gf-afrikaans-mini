@@ -9,11 +9,14 @@ abstract MiniGrammar = MiniCat ** {
     UttImpSg  : Pol -> Imp -> Utt ;
 
     UseCl  : Tense -> Pol -> Cl -> S ;
+    UseRCl : Tense -> Pol -> RCl -> RS ;
     UseQCl : Tense -> Pol -> QCl -> QS ;
 
     AdvS     : Adv -> S  -> S ;
 
     PredVP  : NP -> VP -> Cl ;
+    ExistCl : NP -> Cl ;
+    RelVP : RP -> VP -> RCl ;
     -- SubjCl : Cl -> Subj -> S -> Cl ;     -- she walks because we run
 
     QuestCl    : Cl -> QCl ;             -- does she walk
@@ -26,8 +29,11 @@ abstract MiniGrammar = MiniCat ** {
 
     ImpVP     : VP -> Imp ; 
 
+    IdRP : RP ;
+
     ComplV2 : V2 -> NP -> VP ;
     CompAP  : AP -> VP ;
+    CompNP  : NP -> VP ;
     CompAdv : Adv -> VP ;         -- be here
     ComplVS : VS -> S  -> VP ;  -- know that she walks
     ComplVQ : VQ -> QS -> VP ;  -- wonder who walks
@@ -41,6 +47,7 @@ abstract MiniGrammar = MiniCat ** {
     ModCN   : AP -> CN -> CN ;
     ApposCN : N -> CN -> CN ;
     UsePron : Pron -> NP ;
+    RelNP : NP -> RS -> NP ;
 
     PronDet : Pron -> Det ;
 
@@ -58,7 +65,7 @@ abstract MiniGrammar = MiniCat ** {
     CompoundN : N -> N -> N ;
     UseA    : A -> AP ;
 
-    a_Det, aPl_Det, theSg_Det, thePl_Det, every_Det : Det ;
+    aSg_Det, aPl_Det, theSg_Det, thePl_Det, every_Det : Det ;
     this_Det, these_Det : Det ;
     that_Det, those_Det : Det ;
     noSg_Det : Det ;
@@ -80,7 +87,7 @@ abstract MiniGrammar = MiniCat ** {
 
     who_IP  : IP ;
     here_Adv : Adv ;
-    by_Prep, in_Prep, of_Prep, with_Prep, to_Prep : Prep ;
+    at_Prep, in_Prep, of_Prep, with_Prep, to_Prep, on_Prep, from_Prep, by_Prep : Prep ;
     can_VV, must_VV, want_VV : VV ;
     although_Subj, because_Subj, when_Subj : Subj ;
     when_IAdv, where_IAdv, why_IAdv : IAdv ;

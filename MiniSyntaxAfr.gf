@@ -77,7 +77,7 @@ resource MiniSyntaxAfr = open MiniResAfr, MiniGrammarAfr, Prelude in {
         youSg_Pron : Pron = MiniGrammarAfr.youSg_Pron ;
         she_Pron : Pron = MiniGrammarAfr.she_Pron ;
 
-        aSgDet : Det = a_Det ;
+        aSgDet : Det = aSg_Det ;
         aPlDet : Det = aPl_Det ;
         theSgDet : Det = theSg_Det ;
         thePlDet : Det = thePl_Det ;
@@ -106,7 +106,7 @@ resource MiniSyntaxAfr = open MiniResAfr, MiniGrammarAfr, Prelude in {
             mkAP : Conj -> AP -> AP -> AP = ConjAP ;
         } ;
 
-        byPrep = by_Prep ;
+        atPrep = at_Prep ;
         inPrep = in_Prep ;
         ofPrep = of_Prep ;
         withPrep = with_Prep ;

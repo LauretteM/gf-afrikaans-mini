@@ -4,17 +4,20 @@ concrete MiniCatAfr of MiniCat = open MiniResAfr, Prelude in {
     -- ClSlash ; -- clause missing noun phrase       e.g. "she walks with"
     -- Subj ;    -- subjunction                      e.g. "because"
 
-    S  = { s : Order => Str } ; -- ; finNie : Bool } ;
+    S  = { s : Order => Str } ;
+    RS = { s : Str } ;
     Imp = {s : TPol => Str } ;
     QS = { s : Order => Str ; o : Order ; qw : Str ; hasQw : Bool } ; -- ; finNie : Bool } ;
     QCl = { s : TTense => TPol => Order => Str ; o : Order ; qw : Str ; hasQw : Bool } ; -- ; finNie : Bool } ;
 
     Cl = { s : TTense => TPol => Order => Str } ; -- ; finNie : Bool } ;
+    RCl = { s : TTense => TPol => Str } ;
 
     VP = MiniResAfr.VP ;
 
     NP = { s : Case => Str ; a : Agr ; isPron : Bool ; p : TPol } ; -- gender and number in order to make reflexive verbs work (die vrou verbeel haar, die kinders verbeel hulle)
     AP = { s : AForm => Str } ;
+    RP = {s : Str } ;
 
     PN = { s : Str ; a : Agr } ;
     CN = { s : Number => Str ; g : Gender } ;

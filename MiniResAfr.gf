@@ -169,15 +169,17 @@ resource MiniResAfr = open Prelude,Predef in {
 
         _ + ("rm" | "lm") => mkNoun s (s + "s") ; --R13.3
 
+        b + v@("aa"|"ee"|"oo"|"uu") + c@?  => mkNoun s (b + shortVoc v c + "e") ; --brood, brode --R13.1
+        _ + ("ër" | "ën" | "ël") => mkNoun s (s + "s") ; --R13.3
         ? + ? + ? + _ +
-          ("ël" |"el" | "em" | "um" | "ing" | "or" | "ior" | "er" | "êr" | "erd" | "aar" | "aard" | "ier") => -- unstressed
+          ("el" | "em" | "um" | "ing" | "or" | "ior" | "er" | "êr" | "erd" | "aar" | "aard" | "ier" | "ieur") => -- unstressed
                                               mkNoun s (s + "s") ; --R13.3
 
         ? + ? + _ + (#cons + "en") => mkNoun s (s + "s") ; --R13.3
 
 
         _ +                     ("i"|"u")  => mkNoun s (s + "e") ; --R13.4
-        b + v@("aa"|"ee"|"oo"|"uu") + c@?  => mkNoun s (b + shortVoc v c + "e") ; --brood, brode --R13.1
+        
         b + ("ei"|"eu"|"oe"|"ou"|"ie"|"y"|"ui") + ? => mkNoun s (endCons s + "e") ; --geluid, geluide --R13.1
         b + v@("a"|"e"|"i"|"o"|"u" ) + "f" => mkNoun s (b + v + "ww" + "e") ; --stof, stowwe --R13.1
         b + v@("a"|"e"|"i"|"o"|"u" ) + c@? => mkNoun s (b + v + c + c + "e") ; --dak, dakke --R13.1
